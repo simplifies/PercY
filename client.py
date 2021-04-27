@@ -3,7 +3,7 @@ import os
 import sys
 
 contacts = {
-    "Echo": "127.0.0.1"
+    "Localhost": "127.0.0.1"
 }
 
 user = os.getenv("USERNAME")
