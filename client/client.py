@@ -1,5 +1,4 @@
 from cryptography.fernet import Fernet
-from flask.globals import request
 import requests, json, os
 
 def generate_key():
@@ -56,7 +55,7 @@ def login(user,key):
         "user": user,
         "key": key
     }
-    rq = request.post("http://127.0.0.1:5000/api/login")
+    rq = requests.get("http://127.0.0.1:5000/api/login", headers=data)
     if rq.status_code == 200:
         print("Successfully logged in!")
     if rq.status_code == 401:
