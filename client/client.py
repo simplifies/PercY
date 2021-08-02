@@ -1,4 +1,5 @@
 from cryptography.fernet import Fernet
+from flask.globals import request
 import requests, json, os
 
 def generate_key():
@@ -25,11 +26,14 @@ def get_conversations(user,key):
         "key": key
     }
     rq = requests.get("http://127.0.0.1:5000/api/get_conversations", headers=data)
-    convs = json.loads(rq.text)
-    print("---- CONVERSATIONS ----")
-    for i in convs:
-        print(i)
-    print("\m")
+    if rq.status_code == 401:
+        print("Not authorised!")
+    else:
+        convs = json.loads(rq.text)
+        print("---- CONVERSATIONS ----")
+        for i in convs:
+            print(i)
+        print("\m")
 
 def get_messages(user,key,conversation):
     data = {
@@ -38,11 +42,26 @@ def get_messages(user,key,conversation):
         "conversation": conversation
     }
     rq = requests.get("http://127.0.0.1:5000/api/get_messages", headers=data)
-    data = json.loads(rq.text)
-    print("---- MESSAGES ----")
-    for i in data:
-        print(i)
-    print("\n")
+    if rq.status_code == 401:
+        print("Not authorised!")
+    else:
+        data = json.loads(rq.text)
+        print("---- MESSAGES ----")
+        for i in data:
+            print(i)
+        print("\n")
+
+def login(user,key):
+    data = {
+        "user": user,
+        "key": key
+    }
+    rq = request.post("http://127.0.0.1:5000/api/login")
+    if rq.status_code == 200:
+        print("Successfully logged in!")
+    if rq.status_code == 401:
+        print("Could not login")
+        exit()
 
 def send_messages(to,fromm,key,message):
     data = {
@@ -54,6 +73,8 @@ def send_messages(to,fromm,key,message):
     rq = requests.post("http://127.0.0.1:5000/api/send_message", headers=data)
     if rq.status_code == 200:
         print("Message sent!")
+    if rq.status_code == 401:
+        print("Not authorised!")
 
 def main():
     help_list = """list: List all conversations
@@ -70,6 +91,7 @@ def main():
             f.write(user)
         create_user(user, key)
         print(help_list)
+        login(user,key)
         while True:
             inp = input(">>> ")
             if inp == "list":
@@ -90,6 +112,7 @@ def main():
             key = f.read()
         with open("storage/user.txt", "r") as f:
             user = f.read()
+        login(user,key)
         while True:
             inp = input(">>> ")
             if inp == "list":
