@@ -17,6 +17,22 @@ def create_user():
             f.write(fernet_key)
         return "200", 200
 
+@app.route("/api/login", methods=["GET"])
+def login():
+    if request.method == "GET":
+        data = request.headers
+        key = data["key"]
+        user = data["user"]
+        if os.path.isdir("users/" + user):
+            with open("users/" + user + "key.txt", "r") as f:
+                fernet_key = f.read()
+            if key == fernet_key:
+                return "200", 200
+            else:
+                abort(401)
+        else:
+            abort(404)
+    
 @app.route("/api/send_message", methods=["POST"])
 def send_message():
     if request.method == "POST":
