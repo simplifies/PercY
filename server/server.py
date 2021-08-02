@@ -24,7 +24,7 @@ def login():
         key = data["key"]
         user = data["user"]
         if os.path.isdir("users/" + user):
-            with open("users/" + user + "key.txt", "r") as f:
+            with open("users/" + user + "/key.txt", "r") as f:
                 fernet_key = f.read()
             if key == fernet_key:
                 return "200", 200
