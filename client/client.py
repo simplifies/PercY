@@ -15,6 +15,9 @@ def create_user(user, key):
     rq = requests.post("http://127.0.0.1:5000/api/create_user", headers=data)
     if rq.status_code == 200:
         print("Account successfully created!")
+    if rq.status_code == 400:
+        print("Userame contains illegal characters")
+        exit()
     if rq.status_code == 409:
         print("Account already exists")
         exit()
