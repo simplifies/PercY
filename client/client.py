@@ -43,6 +43,8 @@ def get_messages(user,key,conversation):
     rq = requests.get("http://127.0.0.1:5000/api/get_messages", headers=data)
     if rq.status_code == 401:
         print("Not authorised!")
+    if rq.status_code == 404:
+        print("Conversation not found")
     else:
         data = json.loads(rq.text)
         print("---- MESSAGES ----")
@@ -72,6 +74,8 @@ def send_messages(to,fromm,key,message):
     rq = requests.post("http://127.0.0.1:5000/api/send_message", headers=data)
     if rq.status_code == 200:
         print("Message sent!")
+    if rq.status_code == 404:
+        print("User not found")
     if rq.status_code == 401:
         print("Not authorised!")
 
