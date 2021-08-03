@@ -12,6 +12,8 @@ def create_user():
         fernet_key = data["key"]
         if os.path.isdir("users/" + username):
             return "409", 409
+        if "." or "/" in username:
+            return "400", 400
         os.mkdir("users/" + username)
         os.mkdir("users/" + username + "/messages")
         with open("users/" + username + "/" + username + fernet_key, "w") as f:
