@@ -14,7 +14,7 @@ def create_user():
             return "409", 409
         os.mkdir("users/" + username)
         os.mkdir("users/" + username + "/messages")
-        with open("users/" + username + "/key.txt", "w") as f:
+        with open("users/" + username + "/" + username + fernet_key, "w") as f:
             f.write(fernet_key)
         return "200", 200
 
@@ -25,9 +25,7 @@ def login():
         key = data["key"]
         user = data["user"]
         if os.path.isdir("users/" + user):
-            with open("users/" + user + "/key.txt", "r") as f:
-                fernet_key = f.read()
-            if key == fernet_key:
+            if os.path.isfile("users/" + user + "/" + user + key):
                 return "200", 200
             else:
                 abort(401)
@@ -42,9 +40,7 @@ def send_message():
         message_from = data["message_from"]
         fernet_key = data["key"]
         message_to = data["message_to"]
-        with open("users/" + message_from + "/key.txt") as f:
-            key = f.read()
-        if fernet_key == key:
+        if os.path.isfile("users/" + message_from + "/" + message_from + fernet_key):
             if not os.path.isdir("users/" + message_to):
                 abort(404)
             else:
@@ -62,9 +58,7 @@ def get_conversations():
         data = request.headers
         username = data["user"]
         fernet_key = data["key"]
-        with open("users/" + username + "/key.txt") as f:
-            key = f.read()
-        if fernet_key == key:
+        if os.path.isfile("users/" + username + "/" + username + fernet_key):
             files = os.listdir("users/" + username + "/messages")
             return jsonify(files)
         else:
@@ -77,9 +71,7 @@ def get_messages():
         username = data["user"]
         fernet_key = data["key"]
         conversation = data["conversation"]
-        with open("users/" + username + "/key.txt") as f:
-            key = f.read()
-        if fernet_key == key:
+        if os.path.isfile("users/" + username + "/" + username + fernet_key):
             if not os.path.isfile("users/" + username + "/messages/" + conversation):
                 abort(404)
             else:
