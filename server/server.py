@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, abort, jsonify
 import os, json
 
 app = Flask(__name__)
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 
 @app.route("/api/create_user", methods=["POST"])
 def create_user():
@@ -47,9 +48,9 @@ def send_message():
             if not os.path.isdir("users/" + message_to):
                 abort(404)
             else:
-                with open("users/" + message_from + "/messages/" + message_to + ".txt", "w") as f:
+                with open("users/" + message_from + "/messages/" + message_to, "a") as f:
                     f.write(message_from + ": " + message)
-                with open("users/" + message_to + "/messages/" + message_from + ".txt", "w") as f:
+                with open("users/" + message_to + "/messages/" + message_from, "a") as f:
                     f.write(message_from + ": " + message)
                 return "200", 200
         else:
